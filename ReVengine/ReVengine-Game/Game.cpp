@@ -84,6 +84,7 @@ std::unique_ptr<Rev::Scene> GameScene()
 
 		Rev::Rev_CoreSystems::pRevSound->LoadSound("pew", resourceFolder + SoundPew);
 		Rev::Rev_CoreSystems::pRevSound->LoadSound("EnemyGrawl", resourceFolder + SoundEnemyGrawling);
+		Rev::Rev_CoreSystems::pRevSound->LoadSound("Hurt", resourceFolder + "/sound/Hurt.mp3");
 		Rev::Rev_CoreSystems::pRevSound->PlayRevSound("pew");
 	}
 
@@ -190,6 +191,7 @@ std::unique_ptr<Rev::Scene> GameScene()
 				if (healthComp != nullptr)
 				{
 					healthComp->AddHealth(-5);
+					Rev::Rev_CoreSystems::pRevSound->PlayRevSound("Hurt");
 
 					obj.transform->MoveForward(-1, 2);
 				}
