@@ -112,6 +112,6 @@ namespace Rev
 		static int s_SceneIDCounter;
 		int m_SceneID;
 
-		Rev::Physics* m_Physics;
+		Rev::Physics& m_Physics;
 	};
 }

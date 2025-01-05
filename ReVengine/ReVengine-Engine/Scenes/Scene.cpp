@@ -11,14 +11,14 @@ int Scene::s_SceneIDCounter = 0;
 
 Scene::Scene() :
 	m_SceneID{ s_SceneIDCounter++ },
-	m_Physics{ Rev::Rev_CoreSystems::pSceneManager->GetPhysicsHandle() },
+	m_Physics{ *Rev::Rev_CoreSystems::pSceneManager->GetPhysicsHandle() },
 	m_Tag{"NONE"}
 {
 }
 
 Scene::Scene(std::string tag) :
 	m_SceneID{ s_SceneIDCounter++ },
-	m_Physics{ Rev::Rev_CoreSystems::pSceneManager->GetPhysicsHandle() },
+	m_Physics{ *Rev::Rev_CoreSystems::pSceneManager->GetPhysicsHandle() },
 	m_Tag{ tag }
 {
 }
@@ -104,7 +104,7 @@ void Scene::RemoveGameObject(GameObject* obj)
 
 	auto&& collider = obj->GetComponent<Rev::CompCollision>();
 	if (collider != nullptr)
-		m_Physics->DestroyCollider(collider->GetID());
+		m_Physics.DestroyCollider(collider->GetID());
 
 	m_AllGameObjects.erase(
 		std::remove_if(

@@ -41,7 +41,7 @@ namespace RevDev
 
 		physx::PxPvd* m_Pvd = nullptr;
 
-		RevDev::CollisionCallback* m_CollisionCallback;
+		std::unique_ptr<RevDev::CollisionCallback> m_CollisionCallback;
 
 		std::unordered_map<int, physx::PxRigidActor*> m_Actors;
 	};

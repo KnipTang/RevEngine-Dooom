@@ -38,7 +38,7 @@ void Physics_PhysX::Init()
 
     m_Dispatcher = physx::PxDefaultCpuDispatcherCreate(2);
 
-    m_CollisionCallback = new RevDev::CollisionCallback{};
+    m_CollisionCallback = std::make_unique<RevDev::CollisionCallback>();
 
     physx::PxSceneDesc sceneDesc(m_Physics->getTolerancesScale());
     sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
@@ -59,7 +59,7 @@ void Physics_PhysX::Init()
 
             return physx::PxFilterFlag::eDEFAULT;
         };
-    sceneDesc.simulationEventCallback = m_CollisionCallback;
+    sceneDesc.simulationEventCallback = m_CollisionCallback.get();
     sceneDesc.flags |= physx::PxSceneFlag::eENABLE_ACTIVE_ACTORS;
 
     m_Scene = m_Physics->createScene(sceneDesc);
