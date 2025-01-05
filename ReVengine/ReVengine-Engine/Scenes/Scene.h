@@ -20,23 +20,23 @@ namespace Rev
 	template <class T>
 	concept gameObjectConcept = std::derived_from<T, GameObject>;
 
-	class Scene
+	class Scene final
 	{
 	public:
 		Scene();
+		Scene(std::string tag);
 		~Scene();
 
-		void update(float deltaTime);
-		void lateUpdate(float deltaTime);
-		void fixedUpdate(float fixedDeltaTime);
-		void Physics(float fixedDeltaTime);
-		const void render();
+		void Update(float deltaTime);
+		void LateUpdate(float deltaTime);
+		void FixedUpdate(float fixedDeltaTime);
+		const void Render();
 
-		const GameObject* addGameObject(std::unique_ptr<GameObject> gameObj);
-		const GameObject* addGameObject(GameObject* gameObj);
+		const GameObject* AddGameObject(std::unique_ptr<GameObject> gameObj);
+		const GameObject* AddGameObject(GameObject* gameObj);
 
 		template <gameObjectConcept T>
-		const bool hasGameObject()
+		const bool HasGameObject()
 		{
 			for (const auto& obj : m_AllGameObjects)
 			{
@@ -48,7 +48,7 @@ namespace Rev
 		}
 
 		template <gameObjectConcept T>
-		T* getGameObject()
+		T* GetGameObject()
 		{
 			for (auto& obj : m_AllGameObjects)
 			{
@@ -59,11 +59,12 @@ namespace Rev
 			return nullptr;
 		}
 
-		void removeGameObject(GameObject* obj);
+		void RemoveGameObject(GameObject* obj);
+		void RemoveAllObjects();
 
 		void DisplaySceneHierarchy()
 		{
-			std::printf("Scene Hierachy: %s\tSceneID: %i\n", typeid(*this).name(), sceneID);
+			std::printf("Scene Hierachy: %s\tSceneID: %i\n", typeid(*this).name(), m_SceneID);
 			std::ranges::for_each(m_AllGameObjects,
 				[](std::unique_ptr<GameObject>& obj) -> void
 				{
@@ -72,9 +73,7 @@ namespace Rev
 			);
 		}
 
-		Rev::Physics* getPhysicsHandle() { return m_Physics.get(); }
-
-		const int GetID() { return sceneID; }
+		const int GetID() { return m_SceneID; }
 		
 		void SetActive(bool active);;
 		bool IsActive() { return m_Active; }
@@ -89,7 +88,6 @@ namespace Rev
 			if (IsGameObjectActive(object))
 				m_ActiveGameObjects.erase(std::find(m_ActiveGameObjects.begin(), m_ActiveGameObjects.end(), object));
 		}
-		std::vector<Scene*> GetActiveScenes();
 	private:
 		bool IsGameObjectActive(GameObject* object)
 		{
@@ -101,18 +99,19 @@ namespace Rev
 			return false;
 		}
 
-		void RemoveObjects();
 
 		void SortRenderObjects();
+	public:
+		std::string m_Tag;
 	private:
 		std::vector<std::unique_ptr<GameObject>> m_AllGameObjects;
 		std::vector<GameObject*> m_ActiveGameObjects;
 
 		bool m_Active;
 
-		static int sceneIDCounter;
-		int sceneID;
+		static int s_SceneIDCounter;
+		int m_SceneID;
 
-		std::unique_ptr<Rev::Physics> m_Physics;
+		Rev::Physics* m_Physics;
 	};
 }

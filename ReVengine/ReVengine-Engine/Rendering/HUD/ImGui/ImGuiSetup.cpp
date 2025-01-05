@@ -7,7 +7,8 @@ using namespace RevDev;
 
 ImGuiSetup::ImGuiSetup() :
 	m_ImguiWindowWidth{300},
-	m_ImguiWindowHeight{100}
+	m_ImguiWindowHeight{100},
+	m_On{true}
 {
 }
 
@@ -40,6 +41,8 @@ void ImGuiSetup::InitFor3D11(ID3D11Device& device, ID3D11DeviceContext& deviceCo
 
 void ImGuiSetup::Update()
 {
+	if (m_On)
+	{
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
@@ -58,7 +61,7 @@ void ImGuiSetup::Update()
 
 	for (const auto& element : m_SubscriptedElements)
 	{
-		ImGui::Text("%s: %.2f", element.first.c_str(), *element.second);
+		ImGui::Text("%s%.2f", element.first.c_str(), *element.second);
 	}
 
 	ImGui::End();
@@ -67,6 +70,7 @@ void ImGuiSetup::Update()
 
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	}
 }
 
 void ImGuiSetup::SubscribeElement(std::string text, const float* value)

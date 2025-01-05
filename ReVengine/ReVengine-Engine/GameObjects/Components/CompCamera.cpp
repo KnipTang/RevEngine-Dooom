@@ -18,7 +18,7 @@ CompCamera::CompCamera(GameObject* gameObj, Rev::CompTransform* transform, bool 
 
 }
 
-void CompCamera::lateUpdate([[maybe_unused]] float deltaTime)
+void CompCamera::LateUpdate([[maybe_unused]] float deltaTime)
 {
 	m_Camera->Update(m_Transform->GetWorldPosition(), m_Transform->GetWorldRotation());
 

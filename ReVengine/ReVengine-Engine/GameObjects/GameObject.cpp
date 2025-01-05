@@ -6,7 +6,7 @@
 
 using namespace Rev;
 
-int GameObject::objIDCounter = 0;
+int GameObject::s_ObjIDCounter = 0;
 
 GameObject::GameObject(std::string tag) :
 	m_Tag{ tag },
@@ -15,9 +15,9 @@ GameObject::GameObject(std::string tag) :
 	m_Parent{nullptr},
 	m_Active{true},
 	m_ToDestroy{false},
-	objID{objIDCounter++}
+	m_ObjID{s_ObjIDCounter++}
 {
-	transform = addComponent<Rev::CompTransform>(this);
+	transform = AddComponent<Rev::CompTransform>(this);
 }
 
 GameObject::~GameObject()
@@ -30,7 +30,7 @@ GameObject::GameObject(const GameObject& other) :
 	m_ChildrenCount{ other.m_ChildrenCount },
 	m_Parent{ other.m_Parent },
 	m_Active{ other.m_Active },
-	objID{ objIDCounter++ }
+	m_ObjID{ s_ObjIDCounter++ }
 {
 	m_Components.reserve(other.m_Components.size());
 	for (const auto& comp : other.m_Components) {
@@ -43,51 +43,51 @@ GameObject::GameObject(const GameObject& other) :
 	}
 }
 
-void GameObject::update(float deltaTime)
+void GameObject::Update(float deltaTime)
 {
 	for (auto&& comp : m_Components)
 	{
-		comp->update(deltaTime);
+		comp->Update(deltaTime);
 	}
 	for (auto&& obj : m_Children)
 	{
-		obj->update(deltaTime);
+		obj->Update(deltaTime);
 	}
 }
 
-void GameObject::lateUpdate(float deltaTime)
+void GameObject::LateUpdate(float deltaTime)
 {
 	for (auto&& comp : m_Components)
 	{
-		comp->lateUpdate(deltaTime);
+		comp->LateUpdate(deltaTime);
 	}
 	for (auto&& obj : m_Children)
 	{
-		obj->lateUpdate(deltaTime);
+		obj->LateUpdate(deltaTime);
 	}
 }
 
-void GameObject::fixedUpdate(float fixeDeltaTime)
+void GameObject::FixedUpdate(float fixeDeltaTime)
 {
 	for (auto&& comp : m_Components)
 	{
-		comp->fixedUpdate(fixeDeltaTime);
+		comp->FixedUpdate(fixeDeltaTime);
 	}
 	for (auto&& obj : m_Children)
 	{
-		obj->fixedUpdate(fixeDeltaTime);
+		obj->FixedUpdate(fixeDeltaTime);
 	}
 }
 
-const void GameObject::render()
+const void GameObject::Render()
 {
 	for (auto&& comp : m_Components)
 	{
-		comp->render();
+		comp->Render();
 	}
 	for (auto&& obj : m_Children)
 	{
-		obj->render();
+		obj->Render();
 	}
 }
 

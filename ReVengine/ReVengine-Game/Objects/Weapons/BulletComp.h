@@ -7,13 +7,13 @@ namespace Rev
 	class CompTransform;
 }
 
-class BulletComp : public Rev::BaseComponent
+class BulletComp final : public Rev::BaseComponent
 {
 public:
 	BulletComp(Rev::GameObject* gameObj, float speed);
 	~BulletComp();
 
-	void fixedUpdate([[maybe_unused]] float fixedDeltaTime) override;
+	void FixedUpdate([[maybe_unused]] float fixedDeltaTime) override;
 
 	void SetMaxTravelDistance(float travelDistance) { m_MaxTravelDistance = travelDistance; };
 private:

@@ -8,7 +8,7 @@ namespace Rev
 
 namespace Rev
 {
-	class MemoryPool
+	class MemoryPool final
 	{
 	public:
 		MemoryPool(GameObject* gameObj, int fixedSize);

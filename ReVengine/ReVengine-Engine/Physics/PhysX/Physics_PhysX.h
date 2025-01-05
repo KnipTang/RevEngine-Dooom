@@ -13,7 +13,7 @@ namespace RevDev
 
 namespace RevDev
 {
-	class Physics_PhysX
+	class Physics_PhysX final
 	{
 	public:
 		Physics_PhysX();
@@ -29,19 +29,19 @@ namespace RevDev
 
 		void UpdateActorTransform(int id, glm::vec3 pos, glm::vec3 rot);
 	public:
-		physx::PxScene* gScene = nullptr;
+		physx::PxScene* m_Scene = nullptr;
 
 	private:
-		physx::PxDefaultAllocator gAllocator;
-		physx::PxDefaultErrorCallback gErrorCallback;
-		physx::PxFoundation* gFoundation = nullptr;
-		physx::PxPhysics* gPhysics = nullptr;
-		physx::PxDefaultCpuDispatcher* gDispatcher = nullptr;
-		physx::PxMaterial* gMaterial = nullptr;
+		physx::PxDefaultAllocator m_Allocator;
+		physx::PxDefaultErrorCallback m_ErrorCallback;
+		physx::PxFoundation* m_Foundation = nullptr;
+		physx::PxPhysics* m_Physics = nullptr;
+		physx::PxDefaultCpuDispatcher* m_Dispatcher = nullptr;
+		physx::PxMaterial* m_DefaultMaterial = nullptr;
 
-		physx::PxPvd* gPvd = nullptr;
+		physx::PxPvd* m_Pvd = nullptr;
 
-		RevDev::CollisionCallback* collisionCallback;
+		RevDev::CollisionCallback* m_CollisionCallback;
 
 		std::unordered_map<int, physx::PxRigidActor*> m_Actors;
 	};

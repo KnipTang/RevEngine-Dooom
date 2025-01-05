@@ -6,12 +6,12 @@
 
 using namespace RevDev;
 
-uint32_t Mesh::meshIDCounter = 0;
+uint32_t Mesh::s_MeshIDCounter = 0;
 
 Mesh::Mesh(ID3D11Device* pDevice) :
 	m_Device{pDevice},
 	m_IndiceCount{},
-	meshID{meshIDCounter++}
+	m_MeshID{s_MeshIDCounter++}
 {
 }
 
@@ -20,7 +20,7 @@ Mesh::~Mesh()
 
 }
 
-void Mesh::setupVertexBuffer(const std::vector<Vertex> vertices)
+void Mesh::SetupVertexBuffer(const std::vector<Vertex> vertices)
 {
 	D3D11_BUFFER_DESC vertexBuffer_DESC{ 0 };
 	vertexBuffer_DESC.BindFlags = D3D11_BIND_VERTEX_BUFFER; //Type of vertex buffer
@@ -38,7 +38,7 @@ void Mesh::setupVertexBuffer(const std::vector<Vertex> vertices)
 	assert(SUCCEEDED(result));
 }
 
-void Mesh::setupIndexBuffer(const std::vector<unsigned short> indices) 
+void Mesh::SetupIndexBuffer(const std::vector<unsigned short> indices) 
 {
 	D3D11_BUFFER_DESC indexBuffer_DESC{};
 	indexBuffer_DESC.BindFlags = D3D11_BIND_INDEX_BUFFER; //Type of vertex buffer

@@ -2,10 +2,12 @@
 
 #include <vector>
 #include <memory>
+#include <string>
 
 namespace Rev
 {
 	class Scene;
+	class Physics;
 }
 
 namespace Rev
@@ -13,22 +15,22 @@ namespace Rev
 	template <class T>
 	concept sceneConcept = std::derived_from<T, Scene>;
 
-	class SceneManager
+	class SceneManager final
 	{
 	public:
 		SceneManager();
 		~SceneManager();
 
-		void update(float deltaTime);
-		void lateUpdate(float deltaTime);
-		void fixedUpdate(float fixedDeltaTime);
+		void Update(float deltaTime);
+		void LateUpdate(float deltaTime);
+		void FixedUpdate(float fixedDeltaTime);
 		void Physics(float fixedDeltaTime);
-		const void render();
+		const void Render();
 
-		const Scene* addScene(std::unique_ptr<Scene> scene);
+		const Scene* AddScene(std::unique_ptr<Scene> scene);
 
 		template <sceneConcept T>
-		T* getScene()
+		T* GetScene()
 		{
 			for (auto& scene : m_AllScenes)
 			{
@@ -40,7 +42,7 @@ namespace Rev
 		}
 
 		template <sceneConcept T>
-		void removeScene()
+		void RemoveScene()
 		{
 			m_AllScenes.erase(
 				std::remove_if(m_AllScenes.begin(), m_AllScenes.end(),
@@ -61,8 +63,13 @@ namespace Rev
 				m_ActiveScenes.erase(std::find(m_ActiveScenes.begin(), m_ActiveScenes.end(), scene));
 		}
 		std::vector<Scene*> GetActiveScenes();
+		Scene* GetSceneByID(int ID);
+		Scene* GetSceneByTag(const std::string& tag);
 
-		const int GetID() { return sceneManagerID; }
+		const int GetID() { return m_SceneManagerID; }
+
+		Rev::Physics* GetPhysicsHandle() { return m_Physics.get(); }
+
 
 	private:
 		bool IsSceneActive(Scene* scene)
@@ -78,7 +85,10 @@ namespace Rev
 		std::vector<std::unique_ptr<Scene>> m_AllScenes;
 		std::vector<Scene*> m_ActiveScenes;
 
-		static int sceneManagerIDCounter;
-		int sceneManagerID;
+		static int s_SceneManagerIDCounter;
+		int m_SceneManagerID;
+
+		std::unique_ptr<Rev::Physics> m_Physics;
+
 	};
 }

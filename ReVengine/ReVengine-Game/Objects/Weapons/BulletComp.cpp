@@ -18,7 +18,7 @@ BulletComp::~BulletComp()
 {
 }
 
-void BulletComp::fixedUpdate([[maybe_unused]] float fixedDeltaTime)
+void BulletComp::FixedUpdate([[maybe_unused]] float fixedDeltaTime)
 {
 	m_Transform->MoveForward(1, m_Speed * fixedDeltaTime);
 	m_DistanceTravelled += m_Speed * fixedDeltaTime;

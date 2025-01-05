@@ -25,3 +25,14 @@ void UI::SubscribeElement(std::string text, const float* value)
 		SubscribeElement(text, value);
 	}
 }
+
+void UI::ToggleUI(bool value)
+{
+	if (m_ImGui != nullptr)
+	m_ImGui->ToggleUI(value);
+	else
+	{
+		m_ImGui = Rev::Rev_CoreSystems::pRevRender->GetImGuiHandle();
+		ToggleUI(value);
+	}
+}

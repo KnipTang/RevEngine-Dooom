@@ -13,13 +13,13 @@ namespace Rev
 
 namespace Rev
 {
-	class CompCollision : public Rev::BaseComponent
+	class CompCollision final : public Rev::BaseComponent
 	{
 	public:
 		CompCollision(Rev::GameObject* gameObj, Rev::Physics* physicsHandle, bool staticObject = false, bool gravity = false, glm::vec3 size = { 1,1,1 }, glm::vec3 pos = { 0,0,0 });
 		~CompCollision();
 
-		void lateUpdate([[maybe_unused]] float deltaTime) override;
+		void LateUpdate([[maybe_unused]] float deltaTime) override;
 
 		void SetOnContactFunction(std::function<void(Rev::CompCollision* other)> onContactFnc) { m_OnContactFunction = onContactFnc; }
 		void OnContact(Rev::CompCollision* other);
@@ -35,6 +35,6 @@ namespace Rev
 		glm::vec3 m_Size;
 
 		int m_ColliderID;
-		static int colliderCounter;
+		static int s_ColliderCounter;
 	};
 }

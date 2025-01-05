@@ -18,7 +18,7 @@ LookAtPlayerComp::~LookAtPlayerComp()
 {
 }
 
-void LookAtPlayerComp::update([[maybe_unused]] float deltaTime)
+void LookAtPlayerComp::Update([[maybe_unused]] float deltaTime)
 {
 	//if (m_PlayerTransform->IsPositionDirty())
 		TurnToPlayer();

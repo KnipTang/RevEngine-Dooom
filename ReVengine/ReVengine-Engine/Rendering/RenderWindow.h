@@ -27,7 +27,7 @@ struct Vertex;
 
 namespace RevDev
 {
-	class RenderWindow
+	class RenderWindow final
 	{
 	public:
 		RenderWindow();
@@ -38,13 +38,15 @@ namespace RevDev
 		uint32_t AddMesh(const std::vector<Vertex> vertices, const std::vector<unsigned short> indices);
 		void DrawMesh(uint32_t meshId);
 
-		bool UpdateWindow();
+		bool HandleInput();
+
+		void PresentWindow();
 
 		void RipWindow();
 
 		void LoadTexture();
 
-		const DirectX::XMMATRIX getProjectionMatrix();
+		const DirectX::XMMATRIX GetProjectionMatrix();
 
 		ID3D11Device* GetDevice();
 		ID3D11DeviceContext* GetDeviceContext();

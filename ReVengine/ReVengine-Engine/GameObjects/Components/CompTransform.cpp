@@ -19,7 +19,7 @@ CompTransform::CompTransform(GameObject* gameObj, glm::vec3 position, glm::vec3 
 	SetRotationRad(rotation);
 }
 
-void CompTransform::update([[maybe_unused]] float deltaTime)
+void CompTransform::Update([[maybe_unused]] float deltaTime)
 {
 
 }

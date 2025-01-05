@@ -1,63 +1,61 @@
 #include "SceneManager.h"
 #include "Scenes/Scene.h"
+#include "Physics/Physics.h"
 
 using namespace Rev;
 
-int SceneManager::sceneManagerIDCounter = 0;
+int SceneManager::s_SceneManagerIDCounter = 0;
 
 SceneManager::SceneManager() :
-	sceneManagerID{ sceneManagerIDCounter++ }
+	m_SceneManagerID{ s_SceneManagerIDCounter++ },
+	m_Physics{ std::make_unique<Rev::Physics>() }
 {
+	m_Physics->Init();
 }
 
 SceneManager::~SceneManager()
 {
 }
 
-void SceneManager::update(float deltaTime)
+void SceneManager::Update(float deltaTime)
 {
 	for (auto&& scene : m_ActiveScenes)
 	{
-		scene->update(deltaTime);
+		scene->Update(deltaTime);
 	}
 }
 
-void SceneManager::lateUpdate(float deltaTime)
+void SceneManager::LateUpdate(float deltaTime)
 {
 	for (auto&& scene : m_ActiveScenes)
 	{
-		scene->lateUpdate(deltaTime);
+		scene->LateUpdate(deltaTime);
 	}
 }
 
-void SceneManager::fixedUpdate(float fixedDeltaTime)
+void SceneManager::FixedUpdate(float fixedDeltaTime)
 {
 	for (auto&& scene : m_ActiveScenes)
 	{
-		scene->fixedUpdate(fixedDeltaTime);
+		scene->FixedUpdate(fixedDeltaTime);
 	}
 }
 
 void SceneManager::Physics(float fixedDeltaTime)
 {
-	for (auto&& scene : m_ActiveScenes)
-	{
-		scene->Physics(fixedDeltaTime);
-	}
+	m_Physics->Simulate(fixedDeltaTime);
 }
 
-const void SceneManager::render()
+const void SceneManager::Render()
 {
 	for (auto&& scene : m_ActiveScenes)
 	{
-		scene->render();
+		scene->Render();
 	}
 }
 
-const Scene* SceneManager::addScene(std::unique_ptr<Scene> scene)
+const Scene* SceneManager::AddScene(std::unique_ptr<Scene> scene)
 {
-	scene->SetActive(true);
-
 	m_AllScenes.emplace_back(std::move(scene));
 
 	return m_AllScenes.back().get();
@@ -66,4 +64,24 @@ const Scene* SceneManager::addScene(std::unique_ptr<Scene> scene)
 std::vector<Scene*> SceneManager::GetActiveScenes()
 {
 	return m_ActiveScenes;
+}
+
+Scene* SceneManager::GetSceneByID(int ID)
+{
+	for (auto&& scene : m_AllScenes)
+	{
+		if (scene->GetID() == ID)
+			return scene.get();
+	}
+	return nullptr;
+}
+
+Scene* SceneManager::GetSceneByTag(const std::string& tag)
+{
+	for (auto&& scene : m_AllScenes)
+	{
+		if (scene->m_Tag == tag)
+			return scene.get();
+	}
+	return nullptr;
 }

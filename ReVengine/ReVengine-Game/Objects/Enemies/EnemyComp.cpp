@@ -17,7 +17,7 @@ EnemyComp::~EnemyComp()
 {
 }
 
-void EnemyComp::fixedUpdate([[maybe_unused]] float fixedDeltaTime)
+void EnemyComp::FixedUpdate([[maybe_unused]] float fixedDeltaTime)
 {
 	WalkToPlayer(fixedDeltaTime);
 	PlayEnemySound(fixedDeltaTime);

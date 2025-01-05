@@ -6,7 +6,7 @@
 
 namespace RevDev
 {
-    class CollisionCallback : public physx::PxSimulationEventCallback {
+    class CollisionCallback final : public physx::PxSimulationEventCallback {
     public:
 
         void onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs) override {

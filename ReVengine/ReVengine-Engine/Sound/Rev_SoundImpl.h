@@ -10,7 +10,7 @@ namespace RevDev
 
 namespace RevDev
 {
-	class Rev_SoundImpl
+	class Rev_SoundImpl final
 	{
 	public:
 		Rev_SoundImpl();
@@ -21,7 +21,7 @@ namespace RevDev
 	private:
 		bool FileValid(const std::string source);
 
-		std::unique_ptr<RevDev::Rev_SoLoud> pSoLoud;
+		std::unique_ptr<RevDev::Rev_SoLoud> m_SoLoud;
 
 	};
 }

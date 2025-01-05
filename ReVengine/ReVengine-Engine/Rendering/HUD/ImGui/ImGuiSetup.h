@@ -9,7 +9,7 @@ struct SDL_Window;
 
 namespace RevDev
 {
-	class ImGuiSetup
+	class ImGuiSetup final
 	{
 	public:
 		ImGuiSetup();
@@ -21,6 +21,8 @@ namespace RevDev
 
 		void Update();
 
+		void ToggleUI(bool value) { m_On = value; }
+
 		void SubscribeElement(std::string text, const float* value);
 	private:
 		float m_ImguiWindowWidth;
@@ -29,5 +31,7 @@ namespace RevDev
 		float m_WindowHeight;
 
 		std::unordered_map<std::string, const float*> m_SubscriptedElements;
+
+		bool m_On;
 	};
 }

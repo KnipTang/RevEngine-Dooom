@@ -19,7 +19,7 @@ GunComp::~GunComp()
 
 }
 
-void GunComp::update([[maybe_unused]] float deltaTime)
+void GunComp::Update([[maybe_unused]] float deltaTime)
 {
 	if(!m_ReadyToShoot) 
 		m_TimeLastShot += deltaTime;
@@ -29,15 +29,17 @@ void GunComp::update([[maybe_unused]] float deltaTime)
 
 void GunComp::Fire()
 {
-	if (m_ReadyToShoot)
+	if (m_ReadyToShoot && m_Ammo != 0)
 	{
 		m_TimeLastShot = 0;
 		m_ReadyToShoot = false;
 
+		m_Ammo--;
+
 		Rev::GameObject* bullet = m_BulletFunc();
 		bullet->transform->SetPosition(m_PlayerTransform->GetWorldPosition());
 		bullet->transform->SetRotationRad(m_PlayerTransform->GetWorldRotation());
-		Rev::Rev_CoreSystems::pSceneManager->GetActiveScenes().at(0)->addGameObject(bullet);
+		Rev::Rev_CoreSystems::pSceneManager->GetActiveScenes().at(0)->AddGameObject(bullet);
 
 		if(!m_SoundEffectName.empty()) Rev::Rev_CoreSystems::pRevSound->PlayRevSound(m_SoundEffectName);
 	}

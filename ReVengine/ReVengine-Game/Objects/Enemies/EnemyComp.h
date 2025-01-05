@@ -6,13 +6,13 @@ namespace Rev
 	class CompTransform;
 }
 
-class EnemyComp : public Rev::BaseComponent
+class EnemyComp final : public Rev::BaseComponent
 {
 public:
 	EnemyComp(Rev::GameObject* gameObj);
 	~EnemyComp();
 
-	void fixedUpdate([[maybe_unused]] float fixedDeltaTime) override;
+	void FixedUpdate([[maybe_unused]] float fixedDeltaTime) override;
 
 	void SetSpeed(float speed) { m_Speed = speed; }
 private:

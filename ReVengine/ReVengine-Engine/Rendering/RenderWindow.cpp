@@ -82,8 +82,8 @@ uint32_t RenderWindow::AddMesh(const std::vector<Vertex> vertices, const std::ve
 {
     RevDev::Mesh& mesh = *m_Meshes.emplace_back(std::make_unique<Mesh>(m_CreatorGod->GetDevice())).get();
 
-    mesh.setupVertexBuffer(vertices);
-    mesh.setupIndexBuffer(indices);
+    mesh.SetupVertexBuffer(vertices);
+    mesh.SetupIndexBuffer(indices);
 
     return mesh.GetID();
 }
@@ -100,7 +100,7 @@ void RenderWindow::DrawMesh(uint32_t meshId)
     pDeviceContext->DrawIndexed(mesh->GetIndiceCount(), 0, 0);
 }
 
-bool RenderWindow::UpdateWindow()
+bool RenderWindow::HandleInput()
 {
     m_ImGui->Update();
     //To get window to stay up
@@ -145,9 +145,13 @@ bool RenderWindow::UpdateWindow()
     SDL_GetRelativeMouseState(&xRel, &yRel);
     Rev::Rev_CoreSystems::pInputManager->HandleMouseRelativeMotion(xRel, yRel);
 
-    m_CreatorGod->updateWindow();
 
     return false;
+}
+
+void RenderWindow::PresentWindow()
+{
+    m_CreatorGod->PresentWindow();
 }
 
 void RenderWindow::RipWindow()
@@ -159,7 +163,7 @@ void RenderWindow::RipWindow()
     SDL_Quit();
 }
 
-const DirectX::XMMATRIX RenderWindow::getProjectionMatrix()
+const DirectX::XMMATRIX RenderWindow::GetProjectionMatrix()
 {
     return m_ProjectionMatrix;
 }

@@ -16,33 +16,33 @@ Physics_PhysX::~Physics_PhysX()
         DestroyCollider(i);
     }
 
-    gScene->release();
-    gDispatcher->release();
-    gPhysics->release();
-    gFoundation->release();
+    m_Scene->release();
+    m_Dispatcher->release();
+    m_Physics->release();
+    m_Foundation->release();
 }
 
 void Physics_PhysX::Init()
 {
-    gFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, gAllocator, gErrorCallback);
-    if (!gFoundation)
+    m_Foundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_Allocator, m_ErrorCallback);
+    if (!m_Foundation)
         throw std::runtime_error("gFoundation error!");
 
-    gPvd = PxCreatePvd(*gFoundation);
+    m_Pvd = PxCreatePvd(*m_Foundation);
     physx::PxPvdTransport* transport = physx::PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
-    gPvd->connect(*transport, physx::PxPvdInstrumentationFlag::eALL);
+    m_Pvd->connect(*transport, physx::PxPvdInstrumentationFlag::eALL);
 
-    gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, physx::PxTolerancesScale(), true, gPvd);
-    if (!gPhysics)
+    m_Physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, physx::PxTolerancesScale(), true, m_Pvd);
+    if (!m_Physics)
         throw std::runtime_error("gPhysics error!");
 
-    gDispatcher = physx::PxDefaultCpuDispatcherCreate(2);
+    m_Dispatcher = physx::PxDefaultCpuDispatcherCreate(2);
 
-    collisionCallback = new RevDev::CollisionCallback{};
+    m_CollisionCallback = new RevDev::CollisionCallback{};
 
-    physx::PxSceneDesc sceneDesc(gPhysics->getTolerancesScale());
+    physx::PxSceneDesc sceneDesc(m_Physics->getTolerancesScale());
     sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
-    sceneDesc.cpuDispatcher = gDispatcher;
+    sceneDesc.cpuDispatcher = m_Dispatcher;
     sceneDesc.filterShader = [](
         physx::PxFilterObjectAttributes /*attributes0*/,
         physx::PxFilterData /*filterData0*/,
@@ -59,31 +59,31 @@ void Physics_PhysX::Init()
 
             return physx::PxFilterFlag::eDEFAULT;
         };
-    sceneDesc.simulationEventCallback = collisionCallback;
+    sceneDesc.simulationEventCallback = m_CollisionCallback;
     sceneDesc.flags |= physx::PxSceneFlag::eENABLE_ACTIVE_ACTORS;
 
-    gScene = gPhysics->createScene(sceneDesc);
+    m_Scene = m_Physics->createScene(sceneDesc);
 
-    gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.6f);
-    if (!gMaterial)
+    m_DefaultMaterial = m_Physics->createMaterial(0.5f, 0.5f, 0.6f);
+    if (!m_DefaultMaterial)
         throw std::runtime_error("gMaterial error!");
 }
 
 void Physics_PhysX::Simulate(float fixedDeltaTime)
 {
-    gScene->simulate(fixedDeltaTime);
-    gScene->fetchResults(true);
+    m_Scene->simulate(fixedDeltaTime);
+    m_Scene->fetchResults(true);
 }
 
 void Physics_PhysX::CreateStatic(int id, glm::vec3 pos, glm::vec3 size)
 {
     physx::PxTransform PxPos(physx::PxVec3(pos.x, pos.y, pos.z));
-    physx::PxRigidStatic* PxStatic = gPhysics->createRigidStatic(PxPos);
+    physx::PxRigidStatic* PxStatic = m_Physics->createRigidStatic(PxPos);
 
     physx::PxShape* PxShape = physx::PxRigidActorExt::createExclusiveShape(
         *PxStatic, 
         physx::PxBoxGeometry(size.x, size.y, size.z), 
-        *gMaterial);
+        *m_DefaultMaterial);
     if (!PxShape)
         throw std::runtime_error("CreateExclusiveShape failed!");
 
@@ -93,19 +93,19 @@ void Physics_PhysX::CreateStatic(int id, glm::vec3 pos, glm::vec3 size)
     PxShape->setFlag(physx::PxShapeFlag::eVISUALIZATION, true);
 
 
-    gScene->addActor(*PxStatic);
+    m_Scene->addActor(*PxStatic);
     m_Actors.emplace(id, PxStatic);
 }
 
 void Physics_PhysX::CreateDynamic(int id, glm::vec3 pos, glm::vec3 size, bool gravity, void* userData)
 {
     physx::PxTransform PxPos(physx::PxVec3(pos.x, pos.y, pos.z));
-    physx::PxRigidDynamic* PxDynamic = gPhysics->createRigidDynamic(PxPos);
+    physx::PxRigidDynamic* PxDynamic = m_Physics->createRigidDynamic(PxPos);
 
     physx::PxShape* PxShape = physx::PxRigidActorExt::createExclusiveShape(
         *PxDynamic, 
         physx::PxBoxGeometry(size.x, size.y, size.z), 
-        *gMaterial);
+        *m_DefaultMaterial);
     if (!PxShape)
         throw std::runtime_error("Create shape error");
 
@@ -119,7 +119,7 @@ void Physics_PhysX::CreateDynamic(int id, glm::vec3 pos, glm::vec3 size, bool gr
 
     PxDynamic->userData = userData;
 
-    gScene->addActor(*PxDynamic);
+    m_Scene->addActor(*PxDynamic);
     m_Actors.emplace(id, PxDynamic);
 }
 
@@ -129,7 +129,7 @@ void Physics_PhysX::DestroyCollider(int id)
     if (it != m_Actors.end()) 
     {
         auto&& actor = it->second;
-        gScene->removeActor(*actor);
+        m_Scene->removeActor(*actor);
         actor->release();
         m_Actors.erase(it);
     }

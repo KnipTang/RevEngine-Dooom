@@ -1,10 +1,11 @@
 #include "TextureShader.h"
 #include "Rendering/Texture.h"
+#include "Rev_CoreSystems.h"
 
 using namespace Rev;
 
-TextureShader::TextureShader(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext) :
-	BaseShader(pDevice, pDeviceContext)
+TextureShader::TextureShader() :
+	BaseShader(Rev::Rev_CoreSystems::pRevRender.get()->GetDevice(), Rev::Rev_CoreSystems::pRevRender.get()->GetDeviceContext())
 {
 	LoadShaders(m_VertexFile, m_PixelFile);
 	InitShader();

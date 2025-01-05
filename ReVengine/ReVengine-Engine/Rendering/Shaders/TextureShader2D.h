@@ -14,7 +14,7 @@ namespace Rev {
 
 namespace Rev
 {
-	class TextureShader2D : public Rev::BaseShader
+	class TextureShader2D final : public Rev::BaseShader
 	{
 	private:
 		struct MatrixBufferType
@@ -22,7 +22,7 @@ namespace Rev
 			DirectX::XMMATRIX ortho;
 		};
 	public:
-		TextureShader2D(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+		TextureShader2D();
 		~TextureShader2D();
 
 		void InitShader();

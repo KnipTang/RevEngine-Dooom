@@ -14,8 +14,8 @@ ObjectSpawnerComp::~ObjectSpawnerComp()
 {
 }
 
-void ObjectSpawnerComp::update([[maybe_unused]] float deltaTime)
+void ObjectSpawnerComp::Update([[maybe_unused]] float deltaTime)
 {
 	if (m_SpawnConditionFnc())
-		Rev::Rev_CoreSystems::pSceneManager->GetActiveScenes().at(0)->addGameObject(m_Object());
+		Rev::Rev_CoreSystems::pSceneManager->GetActiveScenes().at(0)->AddGameObject(m_Object());
 }

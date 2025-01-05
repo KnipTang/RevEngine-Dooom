@@ -1,6 +1,7 @@
 #include "ResourceManager.h"
 #include "Rendering/Texture.h"
 #include <SDL_messagebox.h>
+#include "Rev_CoreSystems.h"
 
 using namespace RevDev;
 
@@ -14,7 +15,7 @@ ResourceManager::~ResourceManager()
 
 }
 
-Rev::Texture* ResourceManager::LoadResource(ID3D11Device* pDevice, const std::string& name, const std::string& path)
+Rev::Texture* ResourceManager::LoadResource(const std::string& name, const std::string& path)
 {
 	auto it = m_LoadedResources.find(name);
 	if (it != m_LoadedResources.end()) //Check if inside of loadedResources
@@ -23,7 +24,7 @@ Rev::Texture* ResourceManager::LoadResource(ID3D11Device* pDevice, const std::st
 	}
 	else
 	{
-		Rev::Texture* newTexture = new Rev::Texture{ pDevice, path };
+		Rev::Texture* newTexture = new Rev::Texture{ Rev::Rev_CoreSystems::pRevRender.get()->GetDevice(), path};
 		auto newResource = m_LoadedResources.emplace(name, newTexture);
 		return newResource.first->second.get();
 	}

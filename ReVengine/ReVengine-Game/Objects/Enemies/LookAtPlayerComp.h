@@ -6,13 +6,13 @@ namespace Rev
 	class CompTransform;
 }
 
-class LookAtPlayerComp : public Rev::BaseComponent
+class LookAtPlayerComp final : public Rev::BaseComponent
 {
 public:
 	LookAtPlayerComp(Rev::GameObject* gameObj, Rev::CompTransform* playerTransform);
 	~LookAtPlayerComp();
 
-	void update([[maybe_unused]] float deltaTime) override;
+	void Update([[maybe_unused]] float deltaTime) override;
 
 private:
 	void TurnToPlayer();

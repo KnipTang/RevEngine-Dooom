@@ -10,12 +10,12 @@
 
 using namespace Rev;
 
-CompRender::CompRender(GameObject* gameObj, CompTransform* transform, 
+CompRender::CompRender(GameObject* gameObj, 
 	CompCamera* camera, BaseShader* shader, Texture* texture, 
 	float widthTexture, float heightTexture, 
 	glm::vec3 position, bool transparent) :
 	BaseComponent(gameObj),
-	m_TransformComp{ transform },
+	m_TransformComp{ gameObj->transform },
 	m_CameraComp{ camera },
 	m_Shader{ shader },
 	m_Texture{ texture },
@@ -45,10 +45,10 @@ CompRender::CompRender(GameObject* gameObj, CompTransform* transform,
 	m_MeshId = Rev_CoreSystems::pRevRender->AddMesh(m_Vertices, m_Indices);
 }
 
-const void CompRender::render()
+const void CompRender::Render()
 {
 	DirectX::XMMATRIX modelMatrix = DirectX::XMLoadFloat4x4(reinterpret_cast<const DirectX::XMFLOAT4X4*>(&m_TransformComp->GetModelMatrix()));
-	m_Shader->SetShader(modelMatrix, m_CameraComp->GetCamera()->GetViewMatrix(), Rev::Rev_CoreSystems::pRevRender->getProjectionMatrix(),
+	m_Shader->SetShader(modelMatrix, m_CameraComp->GetCamera()->GetViewMatrix(), Rev::Rev_CoreSystems::pRevRender->GetProjectionMatrix(),
 		m_Texture->GetShaderResourceView());
 	m_Shader->SetShaderStages();
 	Rev_CoreSystems::pRevRender->DrawMesh(m_MeshId);

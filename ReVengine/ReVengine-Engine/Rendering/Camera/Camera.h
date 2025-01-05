@@ -6,7 +6,7 @@
 
 namespace RevDev
 {
-	class Camera
+	class Camera final
 	{
 	public:
 		Camera();

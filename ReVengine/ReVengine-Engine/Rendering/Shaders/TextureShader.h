@@ -14,7 +14,7 @@ namespace Rev {
 
 namespace Rev
 {
-	class TextureShader : public Rev::BaseShader
+	class TextureShader final : public Rev::BaseShader
 	{
 	private:
 		struct MatrixBufferType
@@ -25,7 +25,7 @@ namespace Rev
 		};
 
 	public:
-		TextureShader(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
+		TextureShader();
 		~TextureShader();
 
 		void InitShader();

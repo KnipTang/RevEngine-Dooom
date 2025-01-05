@@ -12,7 +12,7 @@ namespace Rev
 
 namespace RevDev
 {
-	class InputManager
+	class InputManager final
 	{
 	public:
 		InputManager();

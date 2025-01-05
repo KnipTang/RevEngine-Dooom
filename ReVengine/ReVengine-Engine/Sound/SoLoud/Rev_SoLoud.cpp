@@ -10,7 +10,6 @@ using namespace RevDev;
 Rev_SoLoud::Rev_SoLoud()
 {
 	pRevDev_Soloud = std::make_unique<SoLoud::Soloud>();
-	pRevDev_Wave = std::make_unique<SoLoud::Wav>();
 
 	pRevDev_Soloud->init();
 }
@@ -30,9 +29,11 @@ void Rev_SoLoud::LoadSound(const std::string& name, const std::string& source)
 	}
 	else
 	{
-		SoLoud::result result = pRevDev_Wave->load(source.c_str());
+		auto wave = std::make_unique<SoLoud::Wav>();
+
+		SoLoud::result result = wave->load(source.c_str());
 		if (result == SoLoud::SO_NO_ERROR)
-			m_LoadedAudio.emplace(name, pRevDev_Wave.get());
+			m_LoadedAudio.emplace(name, std::move(wave));
 		else
 		{
 			std::string message = "Loaded sound \"" + name + "\" not found!";
@@ -43,9 +44,11 @@ void Rev_SoLoud::LoadSound(const std::string& name, const std::string& source)
 
 void Rev_SoLoud::PlaySound(const std::string name)
 {
-	auto it = m_LoadedAudio.find(name);
+	auto&& it = m_LoadedAudio.find(name);
 	if (it != m_LoadedAudio.end())
+	{
 		pRevDev_Soloud->play(*it->second);
+	}
 	else
 	{
 		std::string message = "Played sound \"" + name + "\" not found!";

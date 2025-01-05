@@ -10,7 +10,7 @@
 
 namespace Rev
 {
-	class Rev_CoreSystems
+	class Rev_CoreSystems final
 	{
 	public:
 		Rev_CoreSystems() = delete;

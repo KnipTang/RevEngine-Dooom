@@ -18,7 +18,7 @@ namespace Rev
 	template <class T>
 	concept baseCompConcept = std::derived_from<T, BaseComponent>;
 
-	class GameObject
+	class GameObject final
 	{
 	public:
 		GameObject(std::string tag = "NONE");
@@ -29,18 +29,18 @@ namespace Rev
 		GameObject(GameObject&& other) = default;
 		GameObject& operator=(GameObject&& other) = default;
 
-		void update(float deltaTime);
-		void lateUpdate(float deltaTime);
-		void fixedUpdate(float fixedDeltaTime);
-		const void render();
+		void Update(float deltaTime);
+		void LateUpdate(float deltaTime);
+		void FixedUpdate(float fixedDeltaTime);
+		const void Render();
 
 		void Destroy() { m_ToDestroy = true; }
 		bool ToBeDestroyed() { return m_ToDestroy; }
 
 		template <baseCompConcept T, typename... TArguments>
-		T* addComponent(GameObject* gameObj, TArguments&&... args)
+		T* AddComponent(GameObject* gameObj, TArguments&&... args)
 		{
-			if (hasComponent<T>())
+			if (HasComponent<T>())
 			{
 				assert(false && "GameObject already has this component");
 				return nullptr;
@@ -53,7 +53,7 @@ namespace Rev
 		}
 
 		template <baseCompConcept T>
-		const bool hasComponent()
+		const bool HasComponent()
 		{
 			for (const auto& comp : m_Components)
 			{
@@ -65,7 +65,7 @@ namespace Rev
 		}
 
 		template <baseCompConcept T>
-		T* getComponent()
+		T* GetComponent()
 		{
 			for (auto& comp : m_Components)
 			{
@@ -77,7 +77,7 @@ namespace Rev
 		}
 
 		template <baseCompConcept T>
-		void removeComponent()
+		void RemoveComponent()
 		{
 			m_Components.erase(
 				std::remove_if(m_Components.begin(), m_Components.end(),
@@ -117,7 +117,7 @@ namespace Rev
 
 		void DisplayHierarchy()
 		{
-			std::printf("\tGameObject: %s\tID: %i\n", typeid(*this).name(), objID);
+			std::printf("\tGameObject: %s\tID: %i\n", typeid(*this).name(), m_ObjID);
 			std::for_each(m_Components.begin(), m_Components.end(), 
 				[](std::unique_ptr<BaseComponent>& comp) -> bool
 				{
@@ -133,7 +133,7 @@ namespace Rev
 			);
 		}
 
-		int GetID() const { return objID; }
+		int GetID() const { return m_ObjID; }
 		const GameObject* GetParent() { return m_Parent; }
 
 		void SetActive(bool active);
@@ -157,7 +157,7 @@ namespace Rev
 
 		bool m_ToDestroy;
 
-		static int objIDCounter;
-		int objID;
+		static int s_ObjIDCounter;
+		int m_ObjID;
 	};
 }

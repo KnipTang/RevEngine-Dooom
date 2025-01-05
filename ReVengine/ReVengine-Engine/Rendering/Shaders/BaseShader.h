@@ -39,7 +39,5 @@ namespace Rev
 		wrl::ComPtr<ID3D11InputLayout> m_InputLayer;
 
 		std::string m_VertexBytecode;
-	private:
-
 	};
 }

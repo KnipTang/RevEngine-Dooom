@@ -1,73 +1,75 @@
 #include "Scene.h"
 #include "GameObjects/GameObject.h"
-#include "Rev_CoreSystems.h"
 #include "Physics/Physics.h"
+#include "Rev_CoreSystems.h"
 #include "GameObjects/Components/CompCollision.h"
 #include "GameObjects/Components/CompRender.h"
 
 using namespace Rev;
 
-int Scene::sceneIDCounter = 0;
+int Scene::s_SceneIDCounter = 0;
 
 Scene::Scene() :
-	sceneID{ sceneIDCounter++ },
-	m_Physics{ std::make_unique<Rev::Physics>() }
+	m_SceneID{ s_SceneIDCounter++ },
+	m_Physics{ Rev::Rev_CoreSystems::pSceneManager->GetPhysicsHandle() },
+	m_Tag{"NONE"}
 {
-	m_Physics->Init();
+}
+
+Scene::Scene(std::string tag) :
+	m_SceneID{ s_SceneIDCounter++ },
+	m_Physics{ Rev::Rev_CoreSystems::pSceneManager->GetPhysicsHandle() },
+	m_Tag{ tag }
+{
 }
 
 Scene::~Scene()
 {
 }
 
-void Scene::update(float deltaTime)
+void Scene::Update(float deltaTime)
 {
 	for (auto&& obj : m_AllGameObjects)
 	{
-		if(obj->IsActive()) obj->update(deltaTime);
+		if(obj->IsActive()) obj->Update(deltaTime);
 	}
 }
 
-void Scene::lateUpdate(float deltaTime)
+void Scene::LateUpdate(float deltaTime)
 {
 	for (auto&& obj : m_AllGameObjects)
 	{
-		if (obj->IsActive()) obj->lateUpdate(deltaTime);
+		if (obj->IsActive()) obj->LateUpdate(deltaTime);
 	}
 
-	RemoveObjects();
+	RemoveAllObjects();
 }
 
-void Scene::fixedUpdate(float fixedDeltaTime)
+void Scene::FixedUpdate(float fixedDeltaTime)
 {
 	for (auto&& obj : m_AllGameObjects)
 	{
-		if (obj->IsActive()) obj->fixedUpdate(fixedDeltaTime);
+		if (obj->IsActive()) obj->FixedUpdate(fixedDeltaTime);
 	}
 }
 
-void Scene::Physics(float fixedDeltaTime)
-{
-	m_Physics->Simulate(fixedDeltaTime);
-}
-
-const void Scene::render()
+const void Scene::Render()
 {
 	SortRenderObjects();
 	for (auto&& obj : m_AllGameObjects)
 	{
-		if (obj->IsActive()) obj->render();
+		if (obj->IsActive()) obj->Render();
 	}
 }
 
-const GameObject* Scene::addGameObject(std::unique_ptr<GameObject> gameObj)
+const GameObject* Scene::AddGameObject(std::unique_ptr<GameObject> gameObj)
 {
 	m_AllGameObjects.emplace_back(std::move(gameObj));
 
 	return m_AllGameObjects.back().get();
 }
 
-const GameObject* Scene::addGameObject(GameObject* gameObj)
+const GameObject* Scene::AddGameObject(GameObject* gameObj)
 {
 	m_AllGameObjects.emplace_back(std::unique_ptr<GameObject>(gameObj));
 
@@ -83,24 +85,24 @@ void Scene::SetActive(bool active)
 		Rev::Rev_CoreSystems::pSceneManager->RemoveActiveScene(this);
 }
 
-void Scene::RemoveObjects()
+void Scene::RemoveAllObjects()
 {
 	for (auto&& obj : m_AllGameObjects)
 	{
 		if (obj == nullptr) continue;
 		if(obj->IsActive() && obj->ToBeDestroyed()) 
-			removeGameObject(obj.get());
+			RemoveGameObject(obj.get());
 	}
 }
 
-void Scene::removeGameObject(GameObject* obj)
+void Scene::RemoveGameObject(GameObject* obj)
 {
 	for (auto&& child : obj->GetChildren())
 	{
 		obj->RemoveChild(child.get());
 	}
 
-	auto&& collider = obj->getComponent<Rev::CompCollision>();
+	auto&& collider = obj->GetComponent<Rev::CompCollision>();
 	if (collider != nullptr)
 		m_Physics->DestroyCollider(collider->GetID());
 
@@ -117,8 +119,8 @@ void Scene::removeGameObject(GameObject* obj)
 void Scene::SortRenderObjects()
 {
 	std::sort(m_AllGameObjects.begin(), m_AllGameObjects.end(), [](const std::unique_ptr<Rev::GameObject>& a, const std::unique_ptr<Rev::GameObject>& b) {
-		auto&& renderCompA = a->getComponent<Rev::CompRender>();
-		auto&& renderCompB = b->getComponent<Rev::CompRender>();
+		auto&& renderCompA = a->GetComponent<Rev::CompRender>();
+		auto&& renderCompB = b->GetComponent<Rev::CompRender>();
 
 		if (!renderCompA || !renderCompB) {
 			return renderCompA != nullptr;

@@ -20,7 +20,7 @@ WindowHandler_D3D11::WindowHandler_D3D11(SDL_Window* window, int windowWidth, in
 	SDL_SysWMinfo wmInfo{};
 	SDL_VERSION(&wmInfo.version);
 	SDL_GetWindowWMInfo(window, &wmInfo);
-	hwnd = wmInfo.info.win.window;
+	m_Hwnd = wmInfo.info.win.window;
 
 	m_WindowWidth = windowWidth;
 	m_WindowHeight = windowHeight;
@@ -33,29 +33,29 @@ WindowHandler_D3D11::~WindowHandler_D3D11()
 
 void RevDev::WindowHandler_D3D11::Setup()
 {
-	setupDeviceAndSwap();
+	SetupDeviceAndSwap();
 	SetupRenderTargetAndStencelBuffer();
 	SetupRasterizerState();
 
-	setupPipeline();
+	SetupPipeline();
 }
 
-void WindowHandler_D3D11::updateWindow()
+void WindowHandler_D3D11::PresentWindow()
 {
-	pSwapChain->Present(1, 0);
-	clearBuffer(m_BackgroundColour);
+	m_SwapChain->Present(1, 0);
+	ClearBuffer(m_BackgroundColour);
 }
 
-void WindowHandler_D3D11::clearBuffer(float backgroundColour[4])
+void WindowHandler_D3D11::ClearBuffer(float backgroundColour[4])
 {
-	pDeviceContext->ClearRenderTargetView(pRenderTargetView.Get(), backgroundColour);
-	pDeviceContext->ClearDepthStencilView(pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,1,0);
+	m_DeviceContext->ClearRenderTargetView(m_RenderTargetView.Get(), backgroundColour);
+	m_DeviceContext->ClearDepthStencilView(m_DepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,1,0);
 }
 
-void WindowHandler_D3D11::setupPipeline()
+void WindowHandler_D3D11::SetupPipeline()
 {
 	//Set type of rendering (point, line (strip), triangle (strip),.... Strip -> 0,1,2,3,4... Non-Strip = (0 - 1), (1 - 2), (5 - 0),...
-	pDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_DeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	D3D11_BLEND_DESC blendDesc = {};
 	blendDesc.RenderTarget[0].BlendEnable = TRUE;
@@ -68,14 +68,14 @@ void WindowHandler_D3D11::setupPipeline()
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
 	wrl::ComPtr<ID3D11BlendState> blendState;
-	pDevice->CreateBlendState(&blendDesc, blendState.GetAddressOf());
+	m_Device->CreateBlendState(&blendDesc, blendState.GetAddressOf());
 
 	float blendColor[4];
 	blendColor[0] = 0.0f;
 	blendColor[1] = 0.0f;
 	blendColor[2] = 0.0f;
 	blendColor[3] = 0.0f;
-	pDeviceContext->OMSetBlendState(blendState.Get(), blendColor, 0xffffffff);
+	m_DeviceContext->OMSetBlendState(blendState.Get(), blendColor, 0xffffffff);
 	
 	//Config viewport -> pixelshader target (renderTarget) From ndc to render view
 	D3D11_VIEWPORT viewPort{};
@@ -86,10 +86,10 @@ void WindowHandler_D3D11::setupPipeline()
 	viewPort.TopLeftX = 0;
 	viewPort.TopLeftY = 0;
 
-	pDeviceContext->RSSetViewports(1, &viewPort);
+	m_DeviceContext->RSSetViewports(1, &viewPort);
 }
 
-void WindowHandler_D3D11::setupDeviceAndSwap()
+void WindowHandler_D3D11::SetupDeviceAndSwap()
 {
 	//Configure the desc(options) for the swapchain pointer
 	DXGI_SWAP_CHAIN_DESC swapChainDESC = { 0 };
@@ -106,7 +106,7 @@ void WindowHandler_D3D11::setupDeviceAndSwap()
 	swapChainDESC.SampleDesc.Quality = 0; //Just means at this point no Anti Aliasing
 	swapChainDESC.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; //Use this buffer as render target
 	swapChainDESC.BufferCount = 1; //one back buffer and one front
-	swapChainDESC.OutputWindow = hwnd; //What window to output on
+	swapChainDESC.OutputWindow = m_Hwnd; //What window to output on
 	swapChainDESC.Windowed = true;
 	swapChainDESC.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	swapChainDESC.Flags = 0;
@@ -127,25 +127,25 @@ void WindowHandler_D3D11::setupDeviceAndSwap()
 		0,
 		D3D11_SDK_VERSION,
 		&swapChainDESC,
-		&pSwapChain,
-		&pDevice,
+		&m_SwapChain,
+		&m_Device,
 		&feature_level,
-		&pDeviceContext);
-	assert(S_OK == hr && pSwapChain && pDevice && pDeviceContext);
+		&m_DeviceContext);
+	assert(S_OK == hr && m_SwapChain && m_Device && m_DeviceContext);
 }
 
 void WindowHandler_D3D11::SetupRenderTargetAndStencelBuffer()
 {
-	HRESULT hr = pSwapChain->GetBuffer(
+	HRESULT hr = m_SwapChain->GetBuffer(
 		0,
 		__uuidof(ID3D11Texture2D),
-		(void**)&pFramebuffer);
+		(void**)&m_Framebuffer);
 	assert(SUCCEEDED(hr));
 
-	hr = pDevice->CreateRenderTargetView(
-		pFramebuffer.Get(),
+	hr = m_Device->CreateRenderTargetView(
+		m_Framebuffer.Get(),
 		nullptr,
-		&pRenderTargetView);
+		&m_RenderTargetView);
 	assert(SUCCEEDED(hr));
 
 	//pFramebuffer->Release();
@@ -155,8 +155,8 @@ void WindowHandler_D3D11::SetupRenderTargetAndStencelBuffer()
 	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
 	wrl::ComPtr<ID3D11DepthStencilState> pDSState;
-	pDevice->CreateDepthStencilState(&dsDesc, &pDSState);
-	pDeviceContext->OMSetDepthStencilState(pDSState.Get(), 0);
+	m_Device->CreateDepthStencilState(&dsDesc, &pDSState);
+	m_DeviceContext->OMSetDepthStencilState(pDSState.Get(), 0);
 
 	wrl::ComPtr<ID3D11Texture2D> pDepthStencil;
 	D3D11_TEXTURE2D_DESC descDepth{};
@@ -169,16 +169,16 @@ void WindowHandler_D3D11::SetupRenderTargetAndStencelBuffer()
 	descDepth.SampleDesc.Quality = 0;
 	descDepth.Usage = D3D11_USAGE_DEFAULT;
 	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	pDevice->CreateTexture2D(&descDepth, nullptr, &pDepthStencil);
+	m_Device->CreateTexture2D(&descDepth, nullptr, &pDepthStencil);
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDepthStectilView = {};
 	descDepthStectilView.Format = DXGI_FORMAT_D32_FLOAT;
 	descDepthStectilView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	descDepthStectilView.Texture2D.MipSlice = 0u;
-	pDevice->CreateDepthStencilView(pDepthStencil.Get(), &descDepthStectilView, &pDepthStencilView);
+	m_Device->CreateDepthStencilView(pDepthStencil.Get(), &descDepthStectilView, &m_DepthStencilView);
 
 	// bind depth stensil view to OM
-	pDeviceContext->OMSetRenderTargets(1u, pRenderTargetView.GetAddressOf(), pDepthStencilView.Get());
+	m_DeviceContext->OMSetRenderTargets(1u, m_RenderTargetView.GetAddressOf(), m_DepthStencilView.Get());
 }
 
 void WindowHandler_D3D11::SetupRasterizerState()
@@ -190,7 +190,7 @@ void WindowHandler_D3D11::SetupRasterizerState()
 	rasterizerDesc.DepthClipEnable = TRUE;
 
 	wrl::ComPtr<ID3D11RasterizerState> rasterizerState;
-	pDevice->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
+	m_Device->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
 
-	pDeviceContext->RSSetState(rasterizerState.Get());
+	m_DeviceContext->RSSetState(rasterizerState.Get());
 }

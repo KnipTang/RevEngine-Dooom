@@ -11,7 +11,7 @@ namespace SoLoud {
 
 namespace RevDev
 {
-	class Rev_SoLoud
+	class Rev_SoLoud final
 	{
 	public:
 		Rev_SoLoud();
@@ -22,8 +22,7 @@ namespace RevDev
 
 	private:
 		std::unique_ptr<SoLoud::Soloud> pRevDev_Soloud;
-		std::unique_ptr<SoLoud::Wav> pRevDev_Wave;
 
-		std::unordered_map<std::string, SoLoud::AudioSource*> m_LoadedAudio; //Normal pointer because SoLoud manages for you
+		std::unordered_map<std::string, std::unique_ptr<SoLoud::Wav>> m_LoadedAudio; //Normal pointer because SoLoud manages for you
 	};
 }

@@ -3,7 +3,7 @@
 #include "GameObjects/BaseComponent.h"
 #include <functional>
 
-class HealthComp : public Rev::BaseComponent
+class HealthComp final : public Rev::BaseComponent
 {
 public:
 	HealthComp(Rev::GameObject* gameObj);

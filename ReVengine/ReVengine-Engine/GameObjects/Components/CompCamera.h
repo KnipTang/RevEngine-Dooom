@@ -21,13 +21,13 @@ enum class RotationAxes
 
 namespace Rev
 {
-	class CompCamera : public BaseComponent
+	class CompCamera final : public BaseComponent
 	{
 	public:
 		CompCamera(GameObject* gameObj, Rev::CompTransform* transform, bool flipControlls = false);
 		~CompCamera() = default;
 
-		void lateUpdate([[maybe_unused]] float deltaTime) override;
+		void LateUpdate([[maybe_unused]] float deltaTime) override;
 
 		void Turn(float x, float y);
 

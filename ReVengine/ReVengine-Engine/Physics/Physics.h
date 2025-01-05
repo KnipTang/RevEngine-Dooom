@@ -10,7 +10,7 @@ namespace RevDev
 
 namespace Rev
 {
-	class Physics
+	class Physics final
 	{
 	public:
 		Physics();

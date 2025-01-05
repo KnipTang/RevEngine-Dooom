@@ -17,17 +17,16 @@ namespace Rev
 
 namespace Rev
 {
-	class CompRender : public BaseComponent
+	class CompRender final : public BaseComponent
 	{
 	public:
-		CompRender(GameObject* gameObj, 
-			CompTransform* transform, CompCamera* camera, 
+		CompRender(GameObject* gameObj, CompCamera* camera, 
 			BaseShader* shader, Texture* texture, 
 			float widthTexture = 1, float heightTexture = 1,
 			glm::vec3 position = {0,0,0}, bool transparent = false);
 		~CompRender() {};
 
-		const void render() override;
+		const void Render() override;
 
 		float GetDistanceToCamera();
 	public:

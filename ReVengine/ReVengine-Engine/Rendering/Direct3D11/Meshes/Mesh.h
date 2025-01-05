@@ -18,16 +18,16 @@ namespace Rev
 
 namespace RevDev
 {
-	class Mesh
+	class Mesh final
 	{
 	public:
 		Mesh(ID3D11Device* pDevice);
 		~Mesh();
 
-		void setupVertexBuffer(const std::vector<Vertex> vertices);
-		void setupIndexBuffer(const std::vector<unsigned short> indices);
+		void SetupVertexBuffer(const std::vector<Vertex> vertices);
+		void SetupIndexBuffer(const std::vector<unsigned short> indices);
 
-		const uint32_t GetID() { return meshID; }
+		const uint32_t GetID() { return m_MeshID; }
 		wrl::ComPtr<ID3D11Buffer> GetVertexBuffer() { return m_VertexBuffer; }
 		wrl::ComPtr<ID3D11Buffer> GetIndexBuffer() { return m_IndexBuffer; }
 		const UINT GetIndiceCount() { return m_IndiceCount; }
@@ -39,7 +39,7 @@ namespace RevDev
 		wrl::ComPtr<ID3D11Buffer> m_IndexBuffer;
 		UINT m_IndiceCount;
 
-		static uint32_t meshIDCounter;
-		uint32_t meshID;
+		static uint32_t s_MeshIDCounter;
+		uint32_t m_MeshID;
 	};
 }

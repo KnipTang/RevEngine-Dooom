@@ -8,13 +8,13 @@ namespace Rev
 	class GameObject;
 }
 
-class ObjectSpawnerComp : public Rev::BaseComponent
+class ObjectSpawnerComp final : public Rev::BaseComponent
 {
 public:
 	ObjectSpawnerComp(Rev::GameObject* gameObj);
 	~ObjectSpawnerComp();
 
-	void update([[maybe_unused]] float deltaTime) override;
+	void Update([[maybe_unused]] float deltaTime) override;
 
 	void SetSpawnCondition(std::function<bool()> spawnConditionFnc) { m_SpawnConditionFnc = spawnConditionFnc; }
 	void SetObjectToSpawn(std::function<Rev::GameObject*()> obj) { m_Object = obj; }

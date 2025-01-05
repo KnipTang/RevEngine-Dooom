@@ -18,7 +18,7 @@ namespace Rev
 		int ImageDesiredChannels = 4;
 	};
 
-	class Texture
+	class Texture final
 	{
 	public:
 		Texture(ID3D11Device* pDevice, std::string path);

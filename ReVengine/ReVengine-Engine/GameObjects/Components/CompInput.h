@@ -7,7 +7,7 @@
 
 namespace Rev
 {
-	class CompInput : public BaseComponent
+	class CompInput final : public BaseComponent
 	{
 	public:
 		CompInput(GameObject* gameObj);

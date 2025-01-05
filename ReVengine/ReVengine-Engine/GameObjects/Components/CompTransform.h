@@ -6,13 +6,13 @@
 
 namespace Rev
 {
-	class CompTransform : public BaseComponent
+	class CompTransform final : public BaseComponent
 	{
 	public:
 		CompTransform(GameObject* gameObj, glm::vec3 position = glm::vec3{0,0,0}, glm::vec3 rotation = glm::vec3{ 0, 0, 0 }, glm::vec3 scale = glm::vec3{ 1,1,1 });
 		~CompTransform() {};
 
-		void update([[maybe_unused]] float deltaTime) override;
+		void Update([[maybe_unused]] float deltaTime) override;
 
 		void SetPosition(float x, float y, float z);
 		void SetPosition(glm::vec3 pos);

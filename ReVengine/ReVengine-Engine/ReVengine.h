@@ -15,7 +15,7 @@ namespace Rev
 
 namespace Rev
 {
-	class ReVengine
+	class ReVengine final
 	{
 	public:
 		ReVengine(int windowWidth, int windowHeight, float nearZ = 0.5f, float farZ = 1000);
@@ -23,7 +23,7 @@ namespace Rev
 
 		void Run(const std::function<SceneManager* ()>& GameRun);
 	private:
-		std::unique_ptr<RevDev::RenderWindow> pRenderWindow;
+		std::unique_ptr<RevDev::RenderWindow> m_RenderWindow;
 
 		int m_WindowWidth;
 		int m_WindowHeight;
