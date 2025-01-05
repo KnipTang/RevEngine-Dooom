@@ -52,7 +52,7 @@ void TextureShader2D::SetupSampler()
 	samplerDesc.MinLOD = -FLT_MAX;
 	samplerDesc.MaxLOD = FLT_MAX;
 
-	HRESULT result = m_Device->CreateSamplerState(&samplerDesc, &m_SamplerState);
+	[[maybe_unused]] HRESULT result = m_Device->CreateSamplerState(&samplerDesc, &m_SamplerState);
 
 	assert(SUCCEEDED(result));
 }

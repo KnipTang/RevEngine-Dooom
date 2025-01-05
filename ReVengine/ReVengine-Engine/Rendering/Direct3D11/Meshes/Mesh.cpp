@@ -34,7 +34,8 @@ void Mesh::SetupVertexBuffer(const std::vector<Vertex> vertices)
 	D3D11_SUBRESOURCE_DATA subResc_DATA{ 0 };
 	subResc_DATA.pSysMem = vertices.data();
 
-	HRESULT result = m_Device->CreateBuffer(&vertexBuffer_DESC, &subResc_DATA, &m_VertexBuffer);
+	[[maybe_unused]] HRESULT result = m_Device->CreateBuffer(&vertexBuffer_DESC, &subResc_DATA, &m_VertexBuffer);
+
 	assert(SUCCEEDED(result));
 }
 
@@ -51,7 +52,7 @@ void Mesh::SetupIndexBuffer(const std::vector<unsigned short> indices)
 	D3D11_SUBRESOURCE_DATA subRescIndex_DATA{ 0 };
 	subRescIndex_DATA.pSysMem = indices.data();
 
-	HRESULT result = m_Device->CreateBuffer(&indexBuffer_DESC, &subRescIndex_DATA, &m_IndexBuffer);
+	[[maybe_unused]] HRESULT result = m_Device->CreateBuffer(&indexBuffer_DESC, &subRescIndex_DATA, &m_IndexBuffer);
 	assert(SUCCEEDED(result));
 
 	m_IndiceCount = UINT(indices.size());

@@ -63,7 +63,7 @@ void Texture::SetupTexture(ID3D11Device* pDevice)
 	ImageSubresourceData.pSysMem = imageData;
 	ImageSubresourceData.SysMemPitch = ImagePitch;
 
-	HRESULT result = pDevice->CreateTexture2D(&ImageTextureDesc,
+	[[maybe_unused]] HRESULT result = pDevice->CreateTexture2D(&ImageTextureDesc,
 		&ImageSubresourceData,
 		&m_ImageTexture
 	);
@@ -73,7 +73,7 @@ void Texture::SetupTexture(ID3D11Device* pDevice)
 
 void Texture::SetupShaderResourceView(ID3D11Device* pDevice)
 {
-	HRESULT result = pDevice->CreateShaderResourceView(m_ImageTexture.Get(),
+	[[maybe_unused]] HRESULT result = pDevice->CreateShaderResourceView(m_ImageTexture.Get(),
 		nullptr,
 		&m_ImageShaderResourceView
 	);

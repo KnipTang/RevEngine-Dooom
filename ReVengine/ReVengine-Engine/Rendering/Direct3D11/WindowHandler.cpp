@@ -118,7 +118,7 @@ void WindowHandler_D3D11::SetupDeviceAndSwap()
 	flags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 	//Creates swapchain, device and device context
-	HRESULT hr = D3D11CreateDeviceAndSwapChain(
+	[[maybe_unused]] HRESULT hr = D3D11CreateDeviceAndSwapChain(
 		nullptr,
 		D3D_DRIVER_TYPE_HARDWARE,
 		nullptr,
@@ -131,12 +131,13 @@ void WindowHandler_D3D11::SetupDeviceAndSwap()
 		&m_Device,
 		&feature_level,
 		&m_DeviceContext);
+
 	assert(S_OK == hr && m_SwapChain && m_Device && m_DeviceContext);
 }
 
 void WindowHandler_D3D11::SetupRenderTargetAndStencelBuffer()
 {
-	HRESULT hr = m_SwapChain->GetBuffer(
+	[[maybe_unused]] HRESULT hr = m_SwapChain->GetBuffer(
 		0,
 		__uuidof(ID3D11Texture2D),
 		(void**)&m_Framebuffer);
